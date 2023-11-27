@@ -1,0 +1,23 @@
+logging:
+  pattern:
+    console: "%white(%d{HH:mm:ss.SSS}) %clr(%5p) %clr(%X{username}){blue}[%clr(%20t){blue}] %clr(%40logger{39}){cyan} %clr(:){green} %m%n%wEx"
+    
+rabbitmq:
+  exchange: spring-boot-direct-exchange
+  queue: ${spring.application.name}
+  routing-key: ${spring.application.name}
+
+spring:
+  application:
+    name: rmq-issue
+  rabbitmq:
+    addresses: dev-vm:5672
+    listener:
+      type: simple
+      simple:
+        concurrency: 20 # This is not working with virtual threads enabled, if I configure it as 16 or lower it is working OK at my machine (i9 with 16 virtual processors)
+      direct:
+        consumers-per-queue: 100 # This is working in all combinations
+  threads:
+    virtual:
+      enabled: true
